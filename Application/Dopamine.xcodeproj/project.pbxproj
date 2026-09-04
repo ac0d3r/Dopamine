@@ -138,7 +138,6 @@
 		8C5FA96F2BDD789C008C246F /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C5FA9412BDD503D008C246F /* IOSurface.framework */; };
 														8C71981A2ABF0E82003C6658 /* DOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C7198192ABF0E82003C6658 /* DOAppDelegate.m */; };
 		8C71981D2ABF0E82003C6658 /* DOSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C71981C2ABF0E82003C6658 /* DOSceneDelegate.m */; };
-		8C7198252ABF0E84003C6658 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C7198242ABF0E84003C6658 /* Assets.xcassets */; };
 		8C7198282ABF0E84003C6658 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C7198262ABF0E84003C6658 /* LaunchScreen.storyboard */; };
 		8C71982B2ABF0E84003C6658 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C71982A2ABF0E84003C6658 /* main.m */; };
 				8CB4087D301FFB130097E18B /* clock_alarm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB4087C301FFB050097E18B /* clock_alarm.c */; };
@@ -404,7 +403,6 @@
 		8C7198192ABF0E82003C6658 /* DOAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DOAppDelegate.m; sourceTree = "<group>"; };
 		8C71981B2ABF0E82003C6658 /* DOSceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOSceneDelegate.h; sourceTree = "<group>"; };
 		8C71981C2ABF0E82003C6658 /* DOSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DOSceneDelegate.m; sourceTree = "<group>"; };
-		8C7198242ABF0E84003C6658 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8C7198272ABF0E84003C6658 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C7198292ABF0E84003C6658 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8C71982A2ABF0E84003C6658 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -893,7 +891,6 @@
 				8C7198322ABF130A003C6658 /* Exploits */,
 				8C029F402B4DFCFE0071DE58 /* Jailbreak */,
 				042479672B66916B0082581B /* UI */,
-				8C7198242ABF0E84003C6658 /* Assets.xcassets */,
 				8C7198262ABF0E84003C6658 /* LaunchScreen.storyboard */,
 				8C7198292ABF0E84003C6658 /* Info.plist */,
 				8C71982A2ABF0E84003C6658 /* main.m */,
@@ -1272,7 +1269,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C7198282ABF0E84003C6658 /* LaunchScreen.storyboard in Resources */,
-				8C7198252ABF0E84003C6658 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2230,9 +2226,6 @@
 		8C71982F2ABF0E84003C6658 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon_ElleKit AppIcon_Red AppIcon_Purple AppIcon_Blue";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -2269,9 +2262,6 @@
 		8C7198302ABF0E84003C6658 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon_ElleKit AppIcon_Red AppIcon_Purple AppIcon_Blue";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
