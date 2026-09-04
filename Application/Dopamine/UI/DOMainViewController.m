@@ -88,15 +88,36 @@
     [DOUIManager sharedInstance].logView = self.logView;
     [[DOUIManager sharedInstance] startLogCapture];
 
-    DOExploit *kernelExploit = [DOExploitManager sharedManager].selectedKernelExploit;
-    NSString *exploitName = kernelExploit ? kernelExploit.name : @"ClearSword (missing)";
-    BOOL supported = [[DOEnvironmentManager sharedManager] isSupported];
-    self.subtitleLabel.text = [NSString stringWithFormat:@"%@\nexploit: %@%@",
-                               [[DOEnvironmentManager sharedManager] versionSupportString],
-                               exploitName,
-                               supported ? @"" : @"\nwarning: device may be unsupported"];
-
+    [self refreshSubtitle];
     [self appendLog:[NSString stringWithFormat:@"Mini Dopamine ready. uid=%d", getuid()]];
+}
+
+- (void)refreshSubtitle
+{
+    DOExploitManager *exploitManager = [DOExploitManager sharedManager];
+    DOEnvironmentManager *environment = [DOEnvironmentManager sharedManager];
+    NSMutableArray<NSString *> *lines = [NSMutableArray array];
+    [lines addObject:environment.versionSupportString];
+
+    DOExploit *kernelExploit = exploitManager.selectedKernelExploit;
+    [lines addObject:[NSString stringWithFormat:@"kernel: %@", kernelExploit ? kernelExploit.name : @"ClearSword (missing)"]];
+
+    if (environment.isPACBypassRequired) {
+        DOExploit *pacBypass = exploitManager.selectedPACBypass;
+        [lines addObject:[NSString stringWithFormat:@"pac: %@", pacBypass ? pacBypass.name : @"missing"]];
+    }
+
+    if (environment.isPPLBypassRequired) {
+        DOExploit *pplBypass = exploitManager.selectedPPLBypass;
+        NSString *kind = environment.isSPTM ? @"sptm" : @"ppl";
+        [lines addObject:[NSString stringWithFormat:@"%@: %@", kind, pplBypass ? pplBypass.name : @"missing"]];
+    }
+
+    if (!environment.isSupported) {
+        [lines addObject:@"warning: device may be unsupported"];
+    }
+
+    self.subtitleLabel.text = [lines componentsJoinedByString:@"\n"];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle

@@ -14,6 +14,12 @@
 								2F11A329301C006D00C1C9F0 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F11A328301C006D00C1C9F0 /* IOSurface.framework */; };
 		2F11A32B301C007500C1C9F0 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F11A32A301C007500C1C9F0 /* IOKit.framework */; };
 		2F11A32C301C007700C1C9F0 /* libjailbreak.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 8C3B2E03301BC1F400C979A6 /* libjailbreak.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2F11A326301BFEC900C1C9F0 /* momentarius.c in Sources */ = {isa = PBXBuildFile; fileRef = 2F11A322301BFE9200C1C9F0 /* momentarius.c */; };
+		2F11A327301BFED300C1C9F0 /* momentarius.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F11A321301BFE9200C1C9F0 /* momentarius.h */; };
+		2F11A32E301C00FF00C1C9F0 /* mm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F11A31D301BFDAE00C1C9F0 /* mm.framework */; };
+		2F11A32F301C00FF00C1C9F0 /* mm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2F11A31D301BFDAE00C1C9F0 /* mm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7CD8FC403022AADF00AF864E /* momentarius_a12.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD8FC373022AADF00AF864E /* momentarius_a12.c */; };
+		7CD8FC413022AADF00AF864E /* momentarius_a13.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD8FC393022AADF00AF864E /* momentarius_a13.c */; };
 										3165CFEF3020A565002737DA /* ipc_port.c in Sources */ = {isa = PBXBuildFile; fileRef = 3165CFE83020A565002737DA /* ipc_port.c */; };
 		3165CFF03020A565002737DA /* IOGPUDevice.c in Sources */ = {isa = PBXBuildFile; fileRef = 3165CFE63020A565002737DA /* IOGPUDevice.c */; };
 		3165CFF13020A565002737DA /* gfx.m in Sources */ = {isa = PBXBuildFile; fileRef = 3165CFE03020A565002737DA /* gfx.m */; };
@@ -31,6 +37,10 @@
 		3165CFFD3020A565002737DA /* info.h in Headers */ = {isa = PBXBuildFile; fileRef = 3165CFE33020A565002737DA /* info.h */; };
 		3165CFFE3020A565002737DA /* kernel_patchfinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3165CFE93020A565002737DA /* kernel_patchfinder.h */; };
 		3165CFFF3020A565002737DA /* offsets.h in Headers */ = {isa = PBXBuildFile; fileRef = 3165CFEC3020A565002737DA /* offsets.h */; };
+		3165CFD53020A516002737DA /* Titan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3165CFCF3020A516002737DA /* Titan.framework */; };
+		3165CFD63020A516002737DA /* Titan.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3165CFCF3020A516002737DA /* Titan.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3165D0033020A579002737DA /* Titan.m in Sources */ = {isa = PBXBuildFile; fileRef = 3165D0023020A579002737DA /* Titan.m */; };
+		3165D0043020A579002737DA /* Titan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3165D0013020A579002737DA /* Titan.h */; };
 						3165D0073020A584002737DA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3165D0063020A584002737DA /* IOKit.framework */; };
 		3165D0083020A58D002737DA /* libjailbreak.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3B2E03301BC1F400C979A6 /* libjailbreak.dylib */; platformFilter = ios; };
 		3165D0093020A58D002737DA /* libjailbreak.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 8C3B2E03301BC1F400C979A6 /* libjailbreak.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -156,6 +166,13 @@
 										/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2F11A330301C00FF00C1C9F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C71980D2ABF0E82003C6658 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2F11A313301BFDAE00C1C9F0;
+			remoteInfo = momentarius;
+		};
 						8C05B0072B63152B001A7CF3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8C71980D2ABF0E82003C6658 /* Project object */;
@@ -183,6 +200,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8C3B2DED301BC05200C979A6;
 			remoteInfo = ClearSword;
+		};
+		3165CFD33020A516002737DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C71980D2ABF0E82003C6658 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3165CFCE3020A516002737DA;
+			remoteInfo = Titan;
 		};
 								/* End PBXContainerItemProxy section */
 
@@ -231,6 +255,8 @@
 				8C3B2DF5301BC05200C979A6 /* ClearSword.framework in Embed Frameworks */,
 				8C2B1FF42B53492B009BA166 /* dmaFail.framework in Embed Frameworks */,
 				8C05B0152B631738001A7CF3 /* badRecovery.framework in Embed Frameworks */,
+				3165CFD63020A516002737DA /* Titan.framework in Embed Frameworks */,
+				2F11A32F301C00FF00C1C9F0 /* mm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -271,6 +297,11 @@
 		04DD0B5C2B7D1A210055DE4F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		04DD0B5D2B7D1A210055DE4F /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 				2F11A31E301BFDAF00C1C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2F11A31D301BFDAE00C1C9F0 /* mm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F11A321301BFE9200C1C9F0 /* momentarius.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = momentarius.h; sourceTree = "<group>"; };
+		2F11A322301BFE9200C1C9F0 /* momentarius.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = momentarius.c; sourceTree = "<group>"; };
+		7CD8FC373022AADF00AF864E /* momentarius_a12.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = momentarius_a12.c; sourceTree = "<group>"; };
+		7CD8FC393022AADF00AF864E /* momentarius_a13.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = momentarius_a13.c; sourceTree = "<group>"; };
 						2F11A328301C006D00C1C9F0 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/IOSurface.framework; sourceTree = DEVELOPER_DIR; };
 		2F11A32A301C007500C1C9F0 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 				3165CFDE3020A565002737DA /* arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = arm64.h; sourceTree = "<group>"; };
@@ -290,6 +321,9 @@
 		3165CFEC3020A565002737DA /* offsets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
 		3165CFED3020A565002737DA /* titan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = titan.h; sourceTree = "<group>"; };
 		3165CFEE3020A565002737DA /* titan.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = titan.m; sourceTree = "<group>"; };
+		3165CFCF3020A516002737DA /* Titan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Titan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3165D0013020A579002737DA /* Titan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Titan.h; sourceTree = "<group>"; };
+		3165D0023020A579002737DA /* Titan.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Titan.m; sourceTree = "<group>"; };
 		3165D0003020A579002737DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 						3165D0063020A584002737DA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		51AB98D92BBF44390042EA7B /* libpartial.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpartial.a; path = Dopamine/Dependencies/libpartial.a; sourceTree = "<group>"; };
@@ -513,6 +547,8 @@
 				8CDD08412B4F6D8700A32B61 /* libgrabkernel2.a in Frameworks */,
 				51F19D052BBF456200896361 /* libpartial.a in Frameworks */,
 				8C3B2DF4301BC05200C979A6 /* ClearSword.framework in Frameworks */,
+				3165CFD53020A516002737DA /* Titan.framework in Frameworks */,
+				2F11A32E301C00FF00C1C9F0 /* mm.framework in Frameworks */,
 				8C029F662B4E2E970071DE58 /* libcompression.tbd in Frameworks */,
 				8C4ABEB62B52094100B43C9B /* libjailbreak.dylib in Frameworks */,
 			);
@@ -584,9 +620,13 @@
 		2F11A320301BFE5200C1C9F0 /* momentarius */ = {
 			isa = PBXGroup;
 			children = (
+				7CD8FC373022AADF00AF864E /* momentarius_a12.c */,
+				7CD8FC393022AADF00AF864E /* momentarius_a13.c */,
 				7CD8FC3A3022AADF00AF864E /* utils.h */,
 				7CD8FC3B3022AADF00AF864E /* utils.c */,
 				2F11A31E301BFDAF00C1C9F0 /* Info.plist */,
+				2F11A321301BFE9200C1C9F0 /* momentarius.h */,
+				2F11A322301BFE9200C1C9F0 /* momentarius.c */,
 			);
 			path = momentarius;
 			sourceTree = "<group>";
@@ -596,6 +636,8 @@
 			children = (
 				3165CFDD3020A553002737DA /* exploit */,
 				3165D0003020A579002737DA /* Info.plist */,
+				3165D0013020A579002737DA /* Titan.h */,
+				3165D0023020A579002737DA /* Titan.m */,
 			);
 			path = Titan;
 			sourceTree = "<group>";
@@ -880,6 +922,8 @@
 				8C2B1FDF2B532374009BA166 /* dmaFail.framework */,
 				8C05B0032B63152B001A7CF3 /* badRecovery.framework */,
 				8C3B2DEE301BC05200C979A6 /* ClearSword.framework */,
+				3165CFCF3020A516002737DA /* Titan.framework */,
+				2F11A31D301BFDAE00C1C9F0 /* mm.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -901,6 +945,8 @@
 		8C7198322ABF130A003C6658 /* Exploits */ = {
 			isa = PBXGroup;
 			children = (
+				2F11A320301BFE5200C1C9F0 /* momentarius */,
+				3165CFDC3020A547002737DA /* Titan */,
 				8C05AFFD2B631443001A7CF3 /* badRecovery */,
 				8C2B1FEE2B5324DE009BA166 /* dmaFail */,
 				8C3B2DEF301BC05200C979A6 /* ClearSword */,
@@ -943,6 +989,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F11A327301BFED300C1C9F0 /* momentarius.h in Headers */,
 				7CD8FC423022AADF00AF864E /* utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -958,6 +1005,7 @@
 				3165CFFA3020A565002737DA /* IOGPUDevice.h in Headers */,
 				3165CFFB3020A565002737DA /* ipc_port.h in Headers */,
 				3165CFFC3020A565002737DA /* titan.h in Headers */,
+				3165D0043020A579002737DA /* Titan.h in Headers */,
 				3165CFFD3020A565002737DA /* info.h in Headers */,
 				3165CFFE3020A565002737DA /* kernel_patchfinder.h in Headers */,
 				3165CFFF3020A565002737DA /* offsets.h in Headers */,
@@ -1135,6 +1183,50 @@
 			productReference = 8C3B2DEE301BC05200C979A6 /* ClearSword.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		2F11A313301BFDAE00C1C9F0 /* momentarius */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2F11A31A301BFDAE00C1C9F0 /* Build configuration list for PBXNativeTarget "momentarius" */;
+			buildPhases = (
+				2F11A314301BFDAE00C1C9F0 /* Headers */,
+				2F11A315301BFDAE00C1C9F0 /* Sources */,
+				2F11A316301BFDAE00C1C9F0 /* Frameworks */,
+				2F11A318301BFDAE00C1C9F0 /* Resources */,
+				2F11A319301BFDAE00C1C9F0 /* ShellScript */,
+				2F11A32D301C007700C1C9F0 /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = momentarius;
+			packageProductDependencies = (
+			);
+			productName = momentarius;
+			productReference = 2F11A31D301BFDAE00C1C9F0 /* mm.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		3165CFCE3020A516002737DA /* Titan */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3165CFDA3020A516002737DA /* Build configuration list for PBXNativeTarget "Titan" */;
+			buildPhases = (
+				3165CFCA3020A516002737DA /* Headers */,
+				3165CFCB3020A516002737DA /* Sources */,
+				3165CFCC3020A516002737DA /* Frameworks */,
+				3165CFCD3020A516002737DA /* Resources */,
+				3165CFDB3020A528002737DA /* ShellScript */,
+				3165D00A3020A58D002737DA /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Titan;
+			packageProductDependencies = (
+			);
+			productName = Titan;
+			productReference = 3165CFCF3020A516002737DA /* Titan.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 						8C7198142ABF0E82003C6658 /* Dopamine */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8C71982E2ABF0E84003C6658 /* Build configuration list for PBXNativeTarget "Dopamine" */;
@@ -1152,6 +1244,8 @@
 				8C05B0082B63152B001A7CF3 /* PBXTargetDependency */,
 				8C3B2DF3301BC05200C979A6 /* PBXTargetDependency */,
 				8C3B2E00301BC18300C979A6 /* PBXTargetDependency */,
+				3165CFD43020A516002737DA /* PBXTargetDependency */,
+				2F11A331301C00FF00C1C9F0 /* PBXTargetDependency */,
 			);
 			name = Dopamine;
 			packageProductDependencies = (
@@ -1174,6 +1268,9 @@
 					};
 					8C2B1FDE2B532374009BA166 = {
 						CreatedOnToolsVersion = 15.1;
+					};
+					3165CFCE3020A516002737DA = {
+						CreatedOnToolsVersion = 26.1;
 					};
 					8C3B2DED301BC05200C979A6 = {
 						CreatedOnToolsVersion = 26.2;
@@ -1202,6 +1299,8 @@
 				8C2B1FDE2B532374009BA166 /* dmaFail */,
 				8C05B0022B63152B001A7CF3 /* badRecovery */,
 				8C3B2DED301BC05200C979A6 /* ClearSword */,
+				3165CFCE3020A516002737DA /* Titan */,
+				2F11A313301BFDAE00C1C9F0 /* momentarius */,
 			);
 		};
 /* End PBXProject section */
@@ -1453,6 +1552,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CD8FC403022AADF00AF864E /* momentarius_a12.c in Sources */,
+				7CD8FC413022AADF00AF864E /* momentarius_a13.c in Sources */,
+				2F11A326301BFEC900C1C9F0 /* momentarius.c in Sources */,
 				7CD8FC3F3022AADF00AF864E /* utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1463,6 +1565,7 @@
 			files = (
 				3165CFEF3020A565002737DA /* ipc_port.c in Sources */,
 				3165CFF03020A565002737DA /* IOGPUDevice.c in Sources */,
+				3165D0033020A579002737DA /* Titan.m in Sources */,
 				3165CFF13020A565002737DA /* gfx.m in Sources */,
 				3165CFF23020A565002737DA /* gfx_patchfinder.c in Sources */,
 				3165CFF33020A565002737DA /* info.c in Sources */,
@@ -1578,6 +1681,16 @@
 			target = 8C3B2DED301BC05200C979A6 /* ClearSword */;
 			targetProxy = 8C3B2DFF301BC18300C979A6 /* PBXContainerItemProxy */;
 		};
+		2F11A331301C00FF00C1C9F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2F11A313301BFDAE00C1C9F0 /* momentarius */;
+			targetProxy = 2F11A330301C00FF00C1C9F0 /* PBXContainerItemProxy */;
+		};
+		3165CFD43020A516002737DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3165CFCE3020A516002737DA /* Titan */;
+			targetProxy = 3165CFD33020A516002737DA /* PBXContainerItemProxy */;
+		};
 								/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1618,8 +1731,8 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.momentarius;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.mm;
+				PRODUCT_NAME = mm;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1655,8 +1768,8 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.momentarius;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.mm;
+				PRODUCT_NAME = mm;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1680,9 +1793,10 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Dopamine/Exploits/Titan/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Titan;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1691,7 +1805,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.Titan;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.tt;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1716,9 +1830,10 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Dopamine/Exploits/Titan/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Titan;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1727,7 +1842,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.Titan;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.tt;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1763,7 +1878,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.badRecovery;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.br;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1798,7 +1913,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.badRecovery;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.br;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1831,7 +1946,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.dmaFail;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.df;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1864,7 +1979,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.opa334.dmaFail;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.zznq.df;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2447,6 +2562,24 @@
 			buildConfigurations = (
 				8C2B1FE82B532374009BA166 /* Debug */,
 				8C2B1FE92B532374009BA166 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2F11A31A301BFDAE00C1C9F0 /* Build configuration list for PBXNativeTarget "momentarius" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F11A31B301BFDAE00C1C9F0 /* Debug */,
+				2F11A31C301BFDAE00C1C9F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3165CFDA3020A516002737DA /* Build configuration list for PBXNativeTarget "Titan" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3165CFD73020A516002737DA /* Debug */,
+				3165CFD83020A516002737DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

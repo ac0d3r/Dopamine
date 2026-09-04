@@ -252,6 +252,27 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
         [[DOUIManager sharedInstance] sendLog:@"Warning: ClearSword is not marked supported on this build, continuing anyway" debug:NO];
     }
 
+    DOExploit *pacBypass = [DOExploitManager sharedManager].selectedPACBypass;
+    if ([[DOEnvironmentManager sharedManager] isPACBypassRequired]) {
+        if (pacBypass) {
+            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"PAC bypass: %@ (%@)", pacBypass.name, pacBypass.identifier] debug:NO];
+        }
+        else {
+            [[DOUIManager sharedInstance] sendLog:@"Warning: PAC bypass is required but was not found" debug:NO];
+        }
+    }
+
+    DOExploit *pplBypass = [DOExploitManager sharedManager].selectedPPLBypass;
+    if ([[DOEnvironmentManager sharedManager] isPPLBypassRequired]) {
+        NSString *kind = [DOEnvironmentManager sharedManager].isSPTM ? @"SPTM" : @"PPL";
+        if (pplBypass) {
+            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"%@ bypass: %@ (%@)", kind, pplBypass.name, pplBypass.identifier] debug:NO];
+        }
+        else {
+            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Warning: %@ bypass is required but was not found", kind] debug:NO];
+        }
+    }
+
     *errOut = [self gatherSystemInformation];
     if (*errOut) return;
 
