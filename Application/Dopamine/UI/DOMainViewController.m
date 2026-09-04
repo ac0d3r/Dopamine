@@ -2,422 +2,234 @@
 //  DOMainViewController.m
 //  Dopamine
 //
-//  Created by tomt000 on 08/01/2024.
-//
 
 #import "DOMainViewController.h"
 #import "DOUIManager.h"
 #import "DOEnvironmentManager.h"
 #import "DOJailbreaker.h"
-#import "DOGlobalAppearance.h"
-#import "DOActionMenuButton.h"
-#import "DOUpdateViewController.h"
-#import "DOLogCrashViewController.h"
-#import <pthread.h>
-#import <sys/sysctl.h>
+#import "DOExploitManager.h"
+#import "DOLogViewProtocol.h"
 #import <libjailbreak/libjailbreak.h>
+#import <unistd.h>
+
+@interface DOMiniLogView : UIView <DOLogViewProtocol>
+@property (nonatomic, strong) UITextView *textView;
+@end
+
+@implementation DOMiniLogView
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.backgroundColor = [UIColor colorWithWhite:0.08 alpha:1.0];
+        self.layer.cornerRadius = 10;
+        self.clipsToBounds = YES;
+
+        _textView = [[UITextView alloc] init];
+        _textView.translatesAutoresizingMaskIntoConstraints = NO;
+        _textView.backgroundColor = [UIColor clearColor];
+        _textView.textColor = [UIColor colorWithWhite:0.92 alpha:1.0];
+        _textView.font = [UIFont monospacedSystemFontOfSize:12 weight:UIFontWeightRegular];
+        _textView.editable = NO;
+        _textView.selectable = YES;
+        _textView.scrollEnabled = YES;
+        _textView.textContainerInset = UIEdgeInsetsMake(10, 8, 10, 8);
+        [self addSubview:_textView];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [_textView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+            [_textView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
+            [_textView.topAnchor constraintEqualToAnchor:self.topAnchor],
+            [_textView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+        ]];
+    }
+    return self;
+}
+
+- (void)showLog:(NSString *)log
+{
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self showLog:log];
+        });
+        return;
+    }
+
+    NSString *line = [NSString stringWithFormat:@"> %@\n", log];
+    self.textView.text = [self.textView.text stringByAppendingString:line];
+    [UIView performWithoutAnimation:^{
+        [self.textView scrollRangeToVisible:NSMakeRange(self.textView.text.length, 0)];
+    }];
+}
+
+- (void)didComplete
+{
+}
+
+@end
 
 @interface DOMainViewController ()
-
-@property DOJailbreakButton *jailbreakBtn;
-@property NSArray<NSLayoutConstraint *> *jailbreakButtonConstraints;
-@property DOActionMenuButton *updateButton;
-@property(nonatomic) BOOL hideStatusBar;
-@property(nonatomic) BOOL hideHomeIndicator;
-
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *subtitleLabel;
+@property (nonatomic, strong) UIButton *executeButton;
+@property (nonatomic, strong) DOMiniLogView *logView;
+@property (nonatomic) BOOL running;
 @end
 
 @implementation DOMainViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    [self setupStack];
-}
+    self.view.backgroundColor = [UIColor blackColor];
+    [self setupUI];
 
--(void)setupStack
-{
-    UIStackView *stackView = [[UIStackView alloc] init];
-    [stackView setAxis:UILayoutConstraintAxisVertical];
-    [stackView setAlignment:UIStackViewAlignmentTrailing];
-    [stackView setDistribution:UIStackViewDistributionEqualSpacing];
-    [stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-    [self.view addSubview:stackView];
-
-
-    int statusBarHeight = fmax(15, [[UIApplication sharedApplication] keyWindow].safeAreaInsets.top - 20);
-
-    [NSLayoutConstraint activateConstraints:@[
-        [stackView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:statusBarHeight],//-35
-        [stackView.heightAnchor constraintEqualToAnchor:self.view.heightAnchor multiplier:[DOGlobalAppearance isHomeButtonDevice] ? 0.78 : 0.73]
-    ]];
-
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-    {
-        NSLayoutConstraint *relativeWidthConstraint = [stackView.widthAnchor constraintEqualToAnchor:self.view.widthAnchor multiplier:0.8];
-        relativeWidthConstraint.priority = UILayoutPriorityDefaultHigh;
-        NSLayoutConstraint *maxWidthConstraint = [stackView.widthAnchor constraintLessThanOrEqualToConstant:UI_IPAD_MAX_WIDTH];
-        maxWidthConstraint.priority = UILayoutPriorityRequired;
-
-        [NSLayoutConstraint activateConstraints:@[
-            relativeWidthConstraint,
-            maxWidthConstraint,
-            [stackView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor]
-        ]];
-    }
-    else
-    {
-        [NSLayoutConstraint activateConstraints:@[
-            [stackView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:UI_PADDING],
-            [stackView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-UI_PADDING],
-        ]];
-    }
-
-    //Header
-    DOHeaderView *headerView = [[DOHeaderView alloc] initWithImage: [UIImage imageNamed:@"Dopamine"] subtitles: @[
-        [DOGlobalAppearance mainSubtitleString:[[DOEnvironmentManager sharedManager] versionSupportString]],
-        [DOGlobalAppearance secondarySubtitleString:DOLocalizedString(@"Credits_Made_By")],
-    ]];
-    
-    [stackView addArrangedSubview:headerView];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [headerView.leadingAnchor constraintEqualToAnchor:stackView.leadingAnchor constant:5],
-        [headerView.trailingAnchor constraintEqualToAnchor:stackView.trailingAnchor]
-    ]];
-    
-    //Action Menu
-    DOActionMenuView *actionView = [[DOActionMenuView alloc] initWithActions:@[
-        [UIAction actionWithTitle:DOLocalizedString(@"Menu_Settings_Title") image:[UIImage systemImageNamed:@"gearshape" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]] identifier:@"settings" handler:^(__kindof UIAction * _Nonnull action) {
-            [self.navigationController pushViewController:[[DOSettingsController alloc] init] animated:YES];
-        }],
-        [UIAction actionWithTitle:DOLocalizedString(@"Menu_Restart_SpringBoard_Title") image:[UIImage systemImageNamed:@"arrow.clockwise" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]] identifier:@"respring" handler:^(__kindof UIAction * _Nonnull action) {
-            [self fadeToBlack:^{
-                [[DOEnvironmentManager sharedManager] respring];
-            }];
-        }],
-        [UIAction actionWithTitle:DOLocalizedString(@"Menu_Reboot_Userspace_Title") image:[UIImage systemImageNamed:@"arrow.clockwise.circle" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]] identifier:@"reboot-userspace" handler:^(__kindof UIAction * _Nonnull action) {
-            [self fadeToBlack:^{
-                [[DOEnvironmentManager sharedManager] rebootUserspace];
-            }];
-        }],
-        [UIAction actionWithTitle:DOLocalizedString(@"Menu_Credits_Title") image:[UIImage systemImageNamed:@"info.circle" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]] identifier:@"credits" handler:^(__kindof UIAction * _Nonnull action) {
-            [self.navigationController pushViewController:[[DOCreditsViewController alloc] init] animated:YES];
-        }]
-    ] delegate:self];
-    
-    [stackView addArrangedSubview: actionView];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [actionView.leadingAnchor constraintEqualToAnchor:stackView.leadingAnchor],
-        [actionView.trailingAnchor constraintEqualToAnchor:stackView.trailingAnchor],
-    ]];
-    
-    
-    UIView *buttonPlaceHolder = [[UIView alloc] init];
-    [buttonPlaceHolder setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [stackView addArrangedSubview:buttonPlaceHolder];
-    [NSLayoutConstraint activateConstraints:@[
-        [buttonPlaceHolder.heightAnchor constraintEqualToConstant:60]
-    ]];
-    
-    //Jailbreak Button
-    BOOL isJailbroken = [[DOEnvironmentManager sharedManager] isJailbroken] || [[DOEnvironmentManager sharedManager] isJailbrokenWithOtherJailbreak];
-    BOOL isSupported = [[DOEnvironmentManager sharedManager] isSupported];
-
-    NSString *jailbreakButtonTitle = [self jailbreakButtonTitle];
-        
-    UIImage *jailbreakButtonImage;
-    if (isSupported)
-        jailbreakButtonImage = [UIImage systemImageNamed:@"lock.open" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]];
-    else
-        jailbreakButtonImage = [UIImage systemImageNamed:@"lock.slash" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]];
-    
-    self.jailbreakBtn = [[DOJailbreakButton alloc] initWithAction: [UIAction actionWithTitle:jailbreakButtonTitle image:jailbreakButtonImage identifier:@"jailbreak" handler:^(__kindof UIAction * _Nonnull action) {
-        [actionView hide];
-        [self.jailbreakBtn expandButton: self.jailbreakButtonConstraints];
-
-        self.updateButton.userInteractionEnabled = NO;
-        [UIView animateWithDuration:0.75 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:2.0  options: UIViewAnimationOptionCurveEaseInOut animations:^{
-            [headerView setTransform:CGAffineTransformMakeTranslation(0, -25)];
-            self.updateButton.alpha = 0;
-        } completion:nil];
-        
-        [self startJailbreak];
-        
-    }]];
-    self.jailbreakBtn.enabled = !isJailbroken && isSupported;
-
-    [self.view addSubview:self.jailbreakBtn];
-
-    [NSLayoutConstraint activateConstraints:(self.jailbreakButtonConstraints = @[
-        [self.jailbreakBtn.leadingAnchor constraintEqualToAnchor:stackView.leadingAnchor],
-        [self.jailbreakBtn.trailingAnchor constraintEqualToAnchor:stackView.trailingAnchor],
-        [self.jailbreakBtn.heightAnchor constraintEqualToAnchor:buttonPlaceHolder.heightAnchor],
-        [self.jailbreakBtn.centerYAnchor constraintEqualToAnchor:buttonPlaceHolder.centerYAnchor]
-    ])];
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        if ([[DOUIManager sharedInstance] environmentUpdateAvailable])
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self setupUpdateAvailable:YES];
-            });
-        }
-        else if ([[DOUIManager sharedInstance] isUpdateAvailable])
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self setupUpdateAvailable:NO];
-            });
-        }
-    });
-}
-
-- (NSString *)jailbreakButtonTitle
-{
-    BOOL isJailbroken = [[DOEnvironmentManager sharedManager] isJailbroken];
-    BOOL isSupported = [[DOEnvironmentManager sharedManager] isSupported];
-    BOOL removeJailbreakEnabled = [[DOPreferenceManager sharedManager] boolPreferenceValueForKey:@"removeJailbreakEnabled" fallback:NO];
-
-    NSString *jailbreakButtonTitle = DOLocalizedString(@"Button_Jailbreak_Title");
-    if (!isSupported)
-        jailbreakButtonTitle = DOLocalizedString(@"Unsupported");
-    else if (isJailbroken)
-        jailbreakButtonTitle = DOLocalizedString(@"Status_Title_Jailbroken");
-    else if (removeJailbreakEnabled)
-        jailbreakButtonTitle = DOLocalizedString(@"Button_Remove_Jailbreak");
-    
-    return jailbreakButtonTitle;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self.jailbreakBtn.button setTitle:[self jailbreakButtonTitle] forState:UIControlStateNormal];
-}
-
-- (void)startJailbreak
-{
-    DOJailbreaker *jailbreaker = [[DOJailbreaker alloc] init];
-
+    [DOUIManager sharedInstance].logView = self.logView;
     [[DOUIManager sharedInstance] startLogCapture];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        if ([jailbreaker contiguousMappingWorkaroundNeeded]) {
-            
-            cpu_subtype_t cpuFamily = 0;
-            size_t cpuFamilySize = sizeof(cpuFamily);
-            sysctlbyname("hw.cpufamily", &cpuFamily, &cpuFamilySize, NULL, 0);
-            NSString *workaroundMessage = DOLocalizedString(@"Respring_Required_Message");
-            if (cpuFamily == CPUFAMILY_ARM_TYPHOON) {
-                workaroundMessage = [workaroundMessage stringByAppendingString:[NSString stringWithFormat:@"\n\n%@", DOLocalizedString(@"Respring_Required_Notice_A8")]];
-            }
 
-            UIAlertController *contiguousMappingWorkaroundAlertController = [UIAlertController alertControllerWithTitle:DOLocalizedString(@"Respring_Required") message:workaroundMessage preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:DOLocalizedString(@"Respring_Cancel") style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                exit(0);
-            }];
-            
-            UIAlertAction *workaroundAction = [UIAlertAction actionWithTitle:DOLocalizedString(@"Apply_Workaround") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [jailbreaker applyContiguousMappingWorkaround];
-            }];
-            
-            [contiguousMappingWorkaroundAlertController addAction:cancelAction];
-            [contiguousMappingWorkaroundAlertController addAction:workaroundAction];
-            contiguousMappingWorkaroundAlertController.preferredAction = workaroundAction;
+    DOExploit *kernelExploit = [DOExploitManager sharedManager].selectedKernelExploit;
+    NSString *exploitName = kernelExploit ? kernelExploit.name : @"ClearSword (missing)";
+    BOOL supported = [[DOEnvironmentManager sharedManager] isSupported];
+    self.subtitleLabel.text = [NSString stringWithFormat:@"%@\nexploit: %@%@",
+                               [[DOEnvironmentManager sharedManager] versionSupportString],
+                               exploitName,
+                               supported ? @"" : @"\nwarning: device may be unsupported"];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self presentViewController:contiguousMappingWorkaroundAlertController animated:YES completion:nil];
-            });
-            return;
-        }
-
-        //We need to get the preconfig mutex to start the jailbreak (self.jailbreakBtn.canStartJailbreak)
-        [self.jailbreakBtn lockMutex];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.hideHomeIndicator = YES;
-        });
-
-        NSError *error;
-        BOOL didRemove = NO;
-        BOOL showLogs = YES;
-        [jailbreaker runWithError:&error didRemoveJailbreak:&didRemove showLogs:&showLogs];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (error && showLogs) {
-                [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Jailbreak failed with error: %@", error] debug:NO];
-                [self.navigationController pushViewController:[[DOLogCrashViewController alloc] initWithTitle:[error localizedDescription]] animated:YES];
-            }
-            else if (error && !showLogs) {
-                // Used when there is an error that is explainable in such detail that additional logs are not needed
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:DOLocalizedString(@"Log_Error") message:[error localizedDescription] preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *rebootAction = [UIAlertAction actionWithTitle:DOLocalizedString(@"Button_Reboot") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    exec_cmd_trusted(JBROOT_PATH("/sbin/reboot"), NULL);
-                }];
-                [alertController addAction:rebootAction];
-                [self presentViewController:alertController animated:YES completion:nil];
-            }
-            else if (didRemove) {
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:DOLocalizedString(@"Removed_Jailbreak_Alert_Title") message:DOLocalizedString(@"Removed_Jailbreak_Alert_Message") preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *rebootAction = [UIAlertAction actionWithTitle:DOLocalizedString(@"Button_Close") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    exit(0);
-                }];
-                [alertController addAction:rebootAction];
-                [self presentViewController:alertController animated:YES completion:nil];
-            }
-            else {
-                // No errors
-                [[DOUIManager sharedInstance] completeJailbreak];
-                [self fadeToBlack: ^{
-                    [jailbreaker finalize];
-                }];
-            }
-        });
-        [self.jailbreakBtn unlockMutex];
-    });
+    [self appendLog:[NSString stringWithFormat:@"Mini Dopamine ready. uid=%d", getuid()]];
 }
-
--(void)setupUpdateAvailable:(BOOL)environmentUpdate
-{
-    if (self.jailbreakBtn.didExpand)
-        return;
-
-    NSString *title = environmentUpdate ? DOLocalizedString(@"Button_Update_Environment") : DOLocalizedString(@"Button_Update_Available");
-    
-    NSString *releaseFrom = [[DOUIManager sharedInstance] getLaunchedReleaseTag];
-    NSString *releaseTo = [[DOUIManager sharedInstance] getLatestReleaseTag];
-
-    if (environmentUpdate)
-    {
-        releaseFrom = [[DOEnvironmentManager sharedManager] jailbrokenVersion];
-        releaseTo = [[DOUIManager sharedInstance] getLaunchedReleaseTag];
-    }
-
-    self.updateButton = [DOActionMenuButton buttonWithAction:[UIAction actionWithTitle:title image:[UIImage systemImageNamed:@"arrow.down.circle" withConfiguration:[DOGlobalAppearance smallIconImageConfiguration]] identifier:@"update-available" handler:^(__kindof UIAction * _Nonnull action) {
-        [self.navigationController pushViewController:[[DOUpdateViewController alloc] initFromTag:releaseFrom toTag:releaseTo] animated:YES];
-    }] chevron:NO];
-
-    self.updateButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:self.updateButton];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [self.updateButton.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-        [self.updateButton.heightAnchor constraintEqualToConstant:30],
-        [self.updateButton.bottomAnchor constraintEqualToAnchor:self.jailbreakBtn.topAnchor constant:[DOGlobalAppearance isHomeButtonDevice] ? -10 : -20]
-    ]];
-
-    [self.updateButton setTransform:CGAffineTransformMakeTranslation(0, 25)];
-    [self.updateButton setAlpha:0];
-    [UIView animateWithDuration:0.5 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:2.0  options: UIViewAnimationOptionCurveEaseInOut animations:^{
-        [self.updateButton setTransform:CGAffineTransformIdentity];
-        [self.updateButton setAlpha:1];
-    } completion:nil];
-}
-
--(void)simulateJailbreak
-{
-    // Let's simulate a "jailbreak" using grand central dispatch
-
-    DOUIManager *uiManager = [DOUIManager sharedInstance];
-
-    static BOOL didFinish = NO; //not thread safe lol
-    
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [uiManager completeJailbreak];
-        [uiManager sendLog:@"Rebooting Userspace" debug: NO];
-        didFinish = YES;
-        [self fadeToBlack: ^{
-
-        }];
-    });
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [NSThread sleepForTimeInterval:0.2];
-        [uiManager sendLog:@"Launching kexploitd" debug: NO];
-        [NSThread sleepForTimeInterval:0.5];
-        [uiManager sendLog:@"Launching oobPCI" debug: NO];
-        [NSThread sleepForTimeInterval:0.15];
-        [uiManager sendLog:@"Gaining r/w" debug: NO];
-        [NSThread sleepForTimeInterval:0.8];
-        [uiManager sendLog:@"Patchfinding" debug: NO];
-        NSArray *types = @[@"AMFI", @"PAC", @"KTRR", @"KPP", @"PPL", @"KPF", @"APRR", @"AMCC", @"PAN", @"PXN", @"ASLR", @"OPA"]; //Ever heard of the legendary opa bypass
-        while (true)
-        {
-            [NSThread sleepForTimeInterval:0.6 * rand() / RAND_MAX];
-            if (didFinish) break;
-            NSString *type = types[arc4random_uniform((uint32_t)types.count)];
-            [uiManager sendLog:[NSString stringWithFormat:@"Bypassing %@", type] debug: NO];
-        }
-    });
-}
-
-- (void)fadeToBlack:(void (^)(void))completion
-{
-    static bool didFade = false;
-    if (didFade)
-        return;
-    didFade = true;
-    UIView *mainView = self.parentViewController.view;
-    float deviceCornerRadius = [[[UIScreen mainScreen] valueForKey:@"_displayCornerRadius"] floatValue];
-
-    mainView.layer.cornerRadius = deviceCornerRadius;
-    mainView.layer.cornerCurve = kCACornerCurveContinuous;
-    mainView.layer.masksToBounds = YES;
-    
-    self.hideStatusBar = YES;
-
-    [UIView animateWithDuration:0.5 delay:0 usingSpringWithDamping:0.9 initialSpringVelocity:2.0 options: UIViewAnimationOptionCurveEaseInOut animations:^{
-        mainView.transform = CGAffineTransformMakeScale(0.9, 0.9);
-        mainView.alpha = 0.0;
-    } completion:^(BOOL success) {
-        completion();
-    }];
-}
-
-#pragma mark - Action Menu Delegate
-
-- (BOOL)actionMenuShowsChevronForAction:(UIAction *)action
-{
-    if ([action.identifier isEqualToString:@"settings"] || [action.identifier isEqualToString:@"credits"]) return YES;
-    return NO;
-}
-
-- (BOOL)actionMenuActionIsEnabled:(UIAction *)action
-{
-    if ([action.identifier isEqualToString:@"respring"] || [action.identifier isEqualToString:@"reboot-userspace"]) {
-        return [[DOEnvironmentManager sharedManager] isJailbroken];
-    }
-    return YES;
-}
-
-#pragma mark - Status Bar
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
 }
 
-- (BOOL)prefersStatusBarHidden
+- (void)setupUI
 {
-    return self.hideStatusBar;
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.titleLabel.text = @"Mini Dopamine";
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [UIFont systemFontOfSize:28 weight:UIFontWeightBold];
+    [self.view addSubview:self.titleLabel];
+
+    self.subtitleLabel = [[UILabel alloc] init];
+    self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.subtitleLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1.0];
+    self.subtitleLabel.font = [UIFont monospacedSystemFontOfSize:12 weight:UIFontWeightRegular];
+    self.subtitleLabel.numberOfLines = 0;
+    [self.view addSubview:self.subtitleLabel];
+
+    self.executeButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.executeButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.executeButton setTitle:@"Execute" forState:UIControlStateNormal];
+    [self.executeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.executeButton.titleLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
+    self.executeButton.backgroundColor = [UIColor systemBlueColor];
+    self.executeButton.layer.cornerRadius = 12;
+    [self.executeButton addTarget:self action:@selector(executeTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.executeButton];
+
+    self.logView = [[DOMiniLogView alloc] init];
+    self.logView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.logView];
+
+    UILayoutGuide *safe = self.view.safeAreaLayoutGuide;
+    [NSLayoutConstraint activateConstraints:@[
+        [self.titleLabel.topAnchor constraintEqualToAnchor:safe.topAnchor constant:20],
+        [self.titleLabel.leadingAnchor constraintEqualToAnchor:safe.leadingAnchor constant:20],
+        [self.titleLabel.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-20],
+
+        [self.subtitleLabel.topAnchor constraintEqualToAnchor:self.titleLabel.bottomAnchor constant:8],
+        [self.subtitleLabel.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor],
+        [self.subtitleLabel.trailingAnchor constraintEqualToAnchor:self.titleLabel.trailingAnchor],
+
+        [self.executeButton.topAnchor constraintEqualToAnchor:self.subtitleLabel.bottomAnchor constant:20],
+        [self.executeButton.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor],
+        [self.executeButton.trailingAnchor constraintEqualToAnchor:self.titleLabel.trailingAnchor],
+        [self.executeButton.heightAnchor constraintEqualToConstant:50],
+
+        [self.logView.topAnchor constraintEqualToAnchor:self.executeButton.bottomAnchor constant:16],
+        [self.logView.leadingAnchor constraintEqualToAnchor:self.titleLabel.leadingAnchor],
+        [self.logView.trailingAnchor constraintEqualToAnchor:self.titleLabel.trailingAnchor],
+        [self.logView.bottomAnchor constraintEqualToAnchor:safe.bottomAnchor constant:-16],
+    ]];
 }
 
-- (BOOL)prefersHomeIndicatorAutoHidden
+- (void)appendLog:(NSString *)log
 {
-    return self.hideHomeIndicator;
+    [[DOUIManager sharedInstance] sendLog:log debug:NO];
 }
 
-- (void)setHideStatusBar:(BOOL)hideStatusBar
+- (void)updateButtonTitle:(NSString *)title color:(UIColor *)color enabled:(BOOL)enabled
 {
-    _hideStatusBar = hideStatusBar;
-    [self setNeedsStatusBarAppearanceUpdate];
+    self.executeButton.enabled = enabled;
+    self.executeButton.alpha = enabled ? 1.0 : 0.85;
+    [self.executeButton setTitle:title forState:UIControlStateNormal];
+    self.executeButton.backgroundColor = color;
 }
 
-- (void)setHideHomeIndicator:(BOOL)hideHomeIndicator
+- (void)setRunning:(BOOL)running
 {
-    _hideHomeIndicator = hideHomeIndicator;
-    [self setNeedsUpdateOfHomeIndicatorAutoHidden];
+    _running = running;
+    if (running) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self updateButtonTitle:@"Running..." color:[UIColor systemGrayColor] enabled:NO];
+        });
+    }
+}
+
+- (void)executeTapped
+{
+    if (self.running) return;
+    [self setRunning:YES];
+
+    DOJailbreaker *jailbreaker = [[DOJailbreaker alloc] init];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        if ([jailbreaker contiguousMappingWorkaroundNeeded]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self presentContiguousMappingAlert:jailbreaker];
+            });
+            return;
+        }
+        [self runMini:jailbreaker];
+    });
+}
+
+- (void)presentContiguousMappingAlert:(DOJailbreaker *)jailbreaker
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Respring Required"
+                                                                   message:@"ClearSword needs a contiguous mapping. Apply the workaround, then reopen Mini Dopamine and tap Execute again."
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        self.running = NO;
+        [self updateButtonTitle:@"Execute" color:[UIColor systemBlueColor] enabled:YES];
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Apply Workaround" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self appendLog:@"Applying contiguous mapping workaround..."];
+        [jailbreaker applyContiguousMappingWorkaround];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)runMini:(DOJailbreaker *)jailbreaker
+{
+    NSError *error = nil;
+    [jailbreaker runMiniWithError:&error];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (error) {
+            [self appendLog:[NSString stringWithFormat:@"Failed: %@", error.localizedDescription]];
+            _running = NO;
+            [self updateButtonTitle:@"Retry" color:[UIColor systemOrangeColor] enabled:YES];
+        }
+        else {
+            [self appendLog:@"Done."];
+            _running = YES;
+            [self updateButtonTitle:@"Done" color:[UIColor systemGreenColor] enabled:NO];
+            [[DOUIManager sharedInstance] completeJailbreak];
+        }
+    });
 }
 
 @end

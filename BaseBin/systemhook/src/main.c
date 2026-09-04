@@ -449,13 +449,7 @@ __attribute__((constructor)) static void initializer(void)
 #endif
 
 	if (load_executable_path() == 0) {
-		// Load rootlesshooks / watchdoghook when neccessary
-		if (!strcmp(gExecutablePath, "/usr/sbin/cfprefsd") ||
-			!strcmp(gExecutablePath, "/System/Library/CoreServices/SpringBoard.app/SpringBoard") ||
-			!strcmp(gExecutablePath, "/usr/libexec/lsd")) {
-			dlopen(JBROOT_PATH("/basebin/rootlesshooks.dylib"), RTLD_NOW);
-		}
-		else if (!strcmp(gExecutablePath, "/usr/libexec/watchdogd")) {
+		if (!strcmp(gExecutablePath, "/usr/libexec/watchdogd")) {
 			dlopen(JBROOT_PATH("/basebin/watchdoghook.dylib"), RTLD_NOW);
 		}
 

@@ -12,15 +12,11 @@ endif
 
 all:
 	@$(MAKE) -C BaseBin
-	@$(MAKE) -C Packages
 	@$(MAKE) -C Application
-	@$(MAKE) -C Standalone
 
 clean:
 	@$(MAKE) -C BaseBin clean
-	@$(MAKE) -C Packages clean
 	@$(MAKE) -C Application clean
-	@$(MAKE) -C Standalone clean
 
 update: all
 	ssh $(DEVICE) "rm -rf /var/mobile/Documents/Dopamine.tipa"

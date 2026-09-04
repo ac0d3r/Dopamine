@@ -1,8 +1,0 @@
-{
-    "endpoint": "https://app.corellium.com",
-    
-	"username": "username",
-    "password": "password",
-
-    "totpToken": "123456"
-}

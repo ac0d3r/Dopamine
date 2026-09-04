@@ -203,11 +203,6 @@ void jbupdate_finalize_stage2(const char *prevVersion, const char *newVersion)
 		reboot(0);
 	}
 
-	// Legacy, this file is no longer used
-	if (!access(JBROOT_PATH("/basebin/.idownloadd_enabled"), F_OK)) {
-		remove(JBROOT_PATH("/basebin/.idownloadd_enabled"));
-	}
-
 	if (strcmp(prevVersion, "2.1") < 0 && strcmp(newVersion, "2.1") >= 0) {
 		// Default value for this pref is true
 		// Set it during jbupdate if prev version is <2.1 and new version is >=2.1
