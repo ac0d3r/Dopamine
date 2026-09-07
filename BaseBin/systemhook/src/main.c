@@ -195,49 +195,6 @@ int csops_audittoken_hook(pid_t pid, unsigned int ops, void *useraddr, size_t us
 
 #endif
 
-bool should_enable_tweaks(void)
-{
-	if (access(JBROOT_PATH("/basebin/.safe_mode"), F_OK) == 0) {
-		return false;
-	}
-
-	char *tweaksDisabledEnv = getenv("DISABLE_TWEAKS");
-	if (tweaksDisabledEnv) {
-		if (!strcmp(tweaksDisabledEnv, "1")) {
-			return false;
-		}
-	}
-
-	if (jbclient_dopamine_is_jailbroken(NULL)) {
-		// Probe whether we are the Dopamine app
-		// Only the Dopamine app is allowed to contact this domain
-		// In this case we want to disable tweak injection to prevent jailbreak detections etc messing with the app functionality
-		return false;
-	}
-
-	const char *tweaksDisabledPathSuffixes[] = {
-		// System binaries
-		"/usr/libexec/xpcproxy",
-	};
-	for (size_t i = 0; i < sizeof(tweaksDisabledPathSuffixes) / sizeof(const char*); i++) {
-		if (string_has_suffix(gExecutablePath, tweaksDisabledPathSuffixes[i])) return false;
-	}
-
-	if (__builtin_available(iOS 16.0, *)) {
-		// These seem to be problematic on iOS 16+ (dyld gets stuck in a weird way when opening TweakLoader)
-		const char *iOS16TweaksDisabledPaths[] = {
-			"/usr/libexec/logd",
-			"/usr/sbin/notifyd",
-			"/usr/libexec/usermanagerd",
-		};
-		for (size_t i = 0; i < sizeof(iOS16TweaksDisabledPaths) / sizeof(const char*); i++) {
-			if (!strcmp(gExecutablePath, iOS16TweaksDisabledPaths[i])) return false;
-		}
-	}
-
-	return true;
-}
-
 int __posix_spawn_hook(pid_t *restrict pid, const char *restrict path, struct _posix_spawn_args_desc *desc, char *const argv[restrict], char * const envp[restrict])
 {
 	return posix_spawn_hook_shared(pid, path, desc, argv, envp, (void *)__posix_spawn_inline, jbclient_trust_file_by_path, jbclient_platform_set_process_debugged, jbclient_jbsettings_get_double("jetsamMultiplier"));
@@ -475,20 +432,6 @@ __attribute__((constructor)) static void initializer(void)
 			litehook_hook_function(necp_session_open, necp_session_open_hook);
 			litehook_hook_function(necp_session_action, necp_session_action_hook);
 		}
-#endif
-		// Load tweaks if desired
-		// We can hardcode /var/jb here since if it doesn't exist, loading TweakLoader.dylib is not going to work anyways
-		if (should_enable_tweaks()) {
-			const char *tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
-			if (access(tweakLoaderPath, F_OK) == 0) {
-				void *tweakLoaderHandle = dlopen(tweakLoaderPath, RTLD_NOW);
-				if (tweakLoaderHandle != NULL) {
-					dlclose(tweakLoaderHandle);
-				}
-			}
-		}
-
-#ifndef __arm64e__
 		// Feeable attempt at adding back CS_VALID
 		jbclient_cs_revalidate();
 #endif
