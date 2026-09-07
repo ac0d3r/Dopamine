@@ -18,7 +18,6 @@
 #import <libjailbreak/hookd.h>
 #import <litehook.h>
 #import "../systemhook/src/common/common.h"
-#import "../systemhook/src/common/hookd_external.h"
 #import "spawn_hook.h"
 #import "xpc_hook.h"
 #import "daemon_hook.h"
@@ -153,7 +152,6 @@ __attribute__((constructor)) static void initializer(void)
 		hookd_provider_init();
 		litehook_hook_memory = litehook_hook_memory_hookd;
 		litehook_hook_function(mach_vm_protect, mach_vm_protect_fixed);
-		init_hookd_external_support();
 	}
 
 	initXPCHooks();

@@ -13,7 +13,6 @@
 #include <libjailbreak/jbroot.h>
 #include <libjailbreak/hookd.h>
 #include "../dyldhook/src/dyld_jbinfo.h"
-#include "common/hookd_external.h"
 #include <choma/CSBlob.h>
 #include "litehook.h"
 #include "sandbox.h"
@@ -337,16 +336,8 @@ __attribute__((constructor)) static void initializer(void)
 
 	// On iOS 26+, hooks have to be applied through hookd
 	if (__builtin_available(iOS 19.0, *)) {
-
-		// If available, use jbclient_mach_hookd_send_msg inside dyld instead...
-		// The reason for this is that dyldhook in itself is fully self contained without calling any external code
-		// We want to make sure no external code is invoked when some binary calls vm_protect
-		// This is mainly due to the fact if the binary is trying to remove the executable flag of a page our logic depends on, the binary will crash
-		// Frida is notorious for this, it hooks something in libsystem in every process it injects to
-		// Alternatively we could also
-		// - Implement inline mach_msg* syscalls into systemhook
-		// - Refactor all logic involving hookd into it's own library and implement the inline syscalls there
-		// But for now this works, the only problem could be something trying to hook a page in dyld itself....
+		// Prefer dyldhook's hookd client when present: it is self-contained and
+		// avoids calling out of systemhook from vm_protect.
 		void *dyld_jbclient_mach_hookd_send_msg = litehook_find_symbol(get_dyld_mach_header(), "_jbclient_mach_hookd_send_msg");
 		if (dyld_jbclient_mach_hookd_send_msg) {
 			hookd_send_msg = dyld_jbclient_mach_hookd_send_msg;
@@ -355,7 +346,6 @@ __attribute__((constructor)) static void initializer(void)
 		if (process_requires_hookd()) {
 			litehook_hook_memory = litehook_hook_memory_hookd;
 			litehook_hook_function(mach_vm_protect, mach_vm_protect_fixed);
-			init_hookd_external_support();
 		}
 	}
 
