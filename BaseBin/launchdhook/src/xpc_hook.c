@@ -4,7 +4,6 @@
 #include <bsm/libbsm.h>
 #include <libproc.h>
 #include <sandbox.h>
-#include <substrate.h>
 #include <libjailbreak/jbserver.h>
 #include <litehook.h>
 

@@ -9,7 +9,6 @@
 #import <spawn.h>
 #import <pthread.h>
 #import <sys/sysctl.h>
-#import <substrate.h>
 #include <sys/param.h>
 #include <sys/mount.h>
 #include <kern_memorystatus.h>

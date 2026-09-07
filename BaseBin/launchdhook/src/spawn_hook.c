@@ -4,7 +4,6 @@
 #include "crashreporter.h"
 #include "update.h"
 #include <libjailbreak/util.h>
-#include <substrate.h>
 #include <mach-o/dyld.h>
 #include <sys/param.h>
 #include <sys/mount.h>
