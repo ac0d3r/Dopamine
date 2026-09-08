@@ -62,7 +62,7 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
     if (sptmPath) NSLog(@"SPTM at %@", sptmPath);
     if (txmPath) NSLog(@"TXM at %@", txmPath);
 
-    [[DOUIManager sharedInstance] sendLog:@"Patchfinding" debug:NO];
+    [[DOUIManager sharedInstance] sendLog:@"Patchfinding"];
 
     int r = xpf_start_with_kernel_path(kernelPath.fileSystemRepresentation, sptmPath ? sptmPath.fileSystemRepresentation : NULL, txmPath ? txmPath.fileSystemRepresentation : NULL);
     if (r != 0) {
@@ -121,7 +121,7 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
         return [NSError errorWithDomain:JBErrorDomain code:JBErrorCodeFailedExploitation userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"%@ bypass is required but was not found", kind]}];
     }
 
-    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Exploiting Kernel (%@)", kernelExploit.name] debug:NO];
+    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Exploiting Kernel (%@)", kernelExploit.name]];
     if ([kernelExploit load] != 0) {
         return [NSError errorWithDomain:JBErrorDomain code:JBErrorCodeFailedLoadingExploit userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Failed to load kernel exploit: %s", dlerror()]}];
     }
@@ -134,7 +134,7 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
     libjailbreak_IOSurface_primitives_init();
 
     if (pacBypass) {
-        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Bypassing PAC (%@)", pacBypass.name] debug:NO];
+        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Bypassing PAC (%@)", pacBypass.name]];
         if ([pacBypass load] != 0) {
             [kernelExploit cleanup];
             return [NSError errorWithDomain:JBErrorDomain code:JBErrorCodeFailedLoadingExploit userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Failed to load PAC bypass: %s", dlerror()]}];
@@ -148,7 +148,7 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
 
     if ([[DOEnvironmentManager sharedManager] isPPLBypassRequired]) {
         NSString *kind = [DOEnvironmentManager sharedManager].isSPTM ? @"SPTM" : @"PPL";
-        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Bypassing %@ (%@)", kind, pplBypass.name] debug:NO];
+        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Bypassing %@ (%@)", kind, pplBypass.name]];
         if ([pplBypass load] != 0) {
             [pacBypass cleanup];
             [kernelExploit cleanup];
@@ -240,25 +240,25 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
 
     struct utsname systemInfo;
     uname(&systemInfo);
-    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Starting Mini Dopamine (%s, %@)", systemInfo.machine, NSProcessInfo.processInfo.operatingSystemVersionString] debug:NO];
+    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Starting Mini Dopamine (%s, %@)", systemInfo.machine, NSProcessInfo.processInfo.operatingSystemVersionString]];
 
     DOExploit *kernelExploit = [DOExploitManager sharedManager].selectedKernelExploit;
     if (!kernelExploit) {
         *errOut = [NSError errorWithDomain:JBErrorDomain code:JBErrorCodeFailedExploitation userInfo:@{NSLocalizedDescriptionKey:@"ClearSword is not in the app bundle"}];
         return;
     }
-    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Kernel exploit: %@ (%@)", kernelExploit.name, kernelExploit.identifier] debug:NO];
+    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Kernel exploit: %@ (%@)", kernelExploit.name, kernelExploit.identifier]];
     if (!kernelExploit.isSupported) {
-        [[DOUIManager sharedInstance] sendLog:@"Warning: ClearSword is not marked supported on this build, continuing anyway" debug:NO];
+        [[DOUIManager sharedInstance] sendLog:@"Warning: ClearSword is not marked supported on this build, continuing anyway"];
     }
 
     DOExploit *pacBypass = [DOExploitManager sharedManager].selectedPACBypass;
     if ([[DOEnvironmentManager sharedManager] isPACBypassRequired]) {
         if (pacBypass) {
-            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"PAC bypass: %@ (%@)", pacBypass.name, pacBypass.identifier] debug:NO];
+            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"PAC bypass: %@ (%@)", pacBypass.name, pacBypass.identifier]];
         }
         else {
-            [[DOUIManager sharedInstance] sendLog:@"Warning: PAC bypass is required but was not found" debug:NO];
+            [[DOUIManager sharedInstance] sendLog:@"Warning: PAC bypass is required but was not found"];
         }
     }
 
@@ -266,10 +266,10 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
     if ([[DOEnvironmentManager sharedManager] isPPLBypassRequired]) {
         NSString *kind = [DOEnvironmentManager sharedManager].isSPTM ? @"SPTM" : @"PPL";
         if (pplBypass) {
-            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"%@ bypass: %@ (%@)", kind, pplBypass.name, pplBypass.identifier] debug:NO];
+            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"%@ bypass: %@ (%@)", kind, pplBypass.name, pplBypass.identifier]];
         }
         else {
-            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Warning: %@ bypass is required but was not found", kind] debug:NO];
+            [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"Warning: %@ bypass is required but was not found", kind]];
         }
     }
 
@@ -282,41 +282,41 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
         return;
     }
 
-    [[DOUIManager sharedInstance] sendLog:@"Building Phys R/W Primitive" debug:NO];
+    [[DOUIManager sharedInstance] sendLog:@"Building Phys R/W Primitive"];
     *errOut = [self buildPhysRWPrimitive];
     if (*errOut) {
         [self cleanUpExploits];
         return;
     }
 
-    [[DOUIManager sharedInstance] sendLog:@"Cleaning Up Exploits" debug:NO];
+    [[DOUIManager sharedInstance] sendLog:@"Cleaning Up Exploits"];
     *errOut = [self cleanUpExploits];
     if (*errOut) return;
 
-    [[DOUIManager sharedInstance] sendLog:@"Elevating Privileges" debug:NO];
+    [[DOUIManager sharedInstance] sendLog:@"Elevating Privileges"];
     *errOut = [self elevatePrivileges];
     if (*errOut) return;
 
     uint64_t proc = proc_self();
     uint32_t kpid = kread32(proc + koffsetof(proc, pid));
     uint64_t launchd = proc_find(1);
-    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"KRW ok: self proc=%#llx pid=%u uid=%d gid=%d", proc, kpid, getuid(), getgid()] debug:NO];
-    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"proc_find(1)=%#llx", launchd] debug:NO];
+    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"KRW ok: self proc=%#llx pid=%u uid=%d gid=%d", proc, kpid, getuid(), getgid()]];
+    [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"proc_find(1)=%#llx", launchd]];
 
     NSError *fsError = nil;
     NSArray *varEntries = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var" error:&fsError];
     if (fsError) {
-        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"/var not readable: %@", fsError.localizedDescription] debug:NO];
+        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"/var not readable: %@", fsError.localizedDescription]];
     } else {
-        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"unsandbox ok: /var entries=%lu", (unsigned long)varEntries.count] debug:NO];
+        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"unsandbox ok: /var entries=%lu", (unsigned long)varEntries.count]];
     }
 
     NSString *bundleRoot = @"/var/containers/Bundle/Application";
     NSArray *appUUIDs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundleRoot error:&fsError];
     if (fsError) {
-        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"App bundle dir not readable: %@", fsError.localizedDescription] debug:NO];
+        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"App bundle dir not readable: %@", fsError.localizedDescription]];
     } else {
-        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"App bundle dir entries=%lu", (unsigned long)appUUIDs.count] debug:NO];
+        [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"App bundle dir entries=%lu", (unsigned long)appUUIDs.count]];
         NSUInteger logged = 0;
         for (NSString *uuid in appUUIDs) {
             NSString *uuidPath = [bundleRoot stringByAppendingPathComponent:uuid];
@@ -326,14 +326,14 @@ typedef NS_ENUM(NSInteger, JBErrorCode) {
                 NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:[[uuidPath stringByAppendingPathComponent:item] stringByAppendingPathComponent:@"Info.plist"]];
                 NSString *bundleId = info[@"CFBundleIdentifier"];
                 if (!bundleId) continue;
-                [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"app: %@", bundleId] debug:NO];
+                [[DOUIManager sharedInstance] sendLog:[NSString stringWithFormat:@"app: %@", bundleId]];
                 if (++logged >= 8) break;
             }
             if (logged >= 8) break;
         }
     }
 
-    [[DOUIManager sharedInstance] sendLog:@"Mini Dopamine ready: KRW + process/file access" debug:NO];
+    [[DOUIManager sharedInstance] sendLog:@"Mini Dopamine ready: KRW + process/file access"];
 }
 
 - (IOSurfaceRef)allocatePurpleGfxMemWithSize:(size_t)size

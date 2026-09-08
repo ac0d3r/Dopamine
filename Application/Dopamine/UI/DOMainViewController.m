@@ -8,11 +8,10 @@
 #import "DOEnvironmentManager.h"
 #import "DOJailbreaker.h"
 #import "DOExploitManager.h"
-#import "DOLogViewProtocol.h"
 #import <libjailbreak/libjailbreak.h>
 #import <unistd.h>
 
-@interface DOMiniLogView : UIView <DOLogViewProtocol>
+@interface DOMiniLogView : UIView
 @property (nonatomic, strong) UITextView *textView;
 @end
 
@@ -63,10 +62,6 @@
     }];
 }
 
-- (void)didComplete
-{
-}
-
 @end
 
 @interface DOMainViewController ()
@@ -83,9 +78,13 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor blackColor];
+    self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
     [self setupUI];
 
-    [DOUIManager sharedInstance].logView = self.logView;
+    __weak typeof(self) weakSelf = self;
+    [DOUIManager sharedInstance].logHandler = ^(NSString *log) {
+        [weakSelf.logView showLog:log];
+    };
     [[DOUIManager sharedInstance] startLogCapture];
 
     [self refreshSubtitle];
@@ -179,7 +178,7 @@
 
 - (void)appendLog:(NSString *)log
 {
-    [[DOUIManager sharedInstance] sendLog:log debug:NO];
+    [[DOUIManager sharedInstance] sendLog:log];
 }
 
 - (void)updateButtonTitle:(NSString *)title color:(UIColor *)color enabled:(BOOL)enabled
@@ -248,7 +247,6 @@
             [self appendLog:@"Done."];
             _running = YES;
             [self updateButtonTitle:@"Done" color:[UIColor systemGreenColor] enabled:NO];
-            [[DOUIManager sharedInstance] completeJailbreak];
         }
     });
 }

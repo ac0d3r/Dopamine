@@ -116,7 +116,7 @@
         return kernelInApp;
     }
 
-    [[DOUIManager sharedInstance] sendLog:@"Downloading Kernel" debug:NO];
+    [[DOUIManager sharedInstance] sendLog:@"Downloading Kernel"];
     NSString *kernelcachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/kernelcache"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:kernelcachePath]) {
         if (grab_images([NSHomeDirectory() stringByAppendingPathComponent:@"Documents"]) == false) return nil;

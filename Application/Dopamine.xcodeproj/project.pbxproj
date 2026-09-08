@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 																												042479AE2B66916B0082581B /* DOUIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 042479882B66916B0082581B /* DOUIManager.m */; };
-		042479AF2B66916B0082581B /* DONavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042479892B66916B0082581B /* DONavigationController.m */; };
 																		042479B82B66916B0082581B /* DOMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0424799F2B66916B0082581B /* DOMainViewController.m */; };
 																																				2F11A317301BFDAE00C1C9F0 /* libjailbreak.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3B2E03301BC1F400C979A6 /* libjailbreak.dylib */; platformFilter = ios; };
 								2F11A329301C006D00C1C9F0 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F11A328301C006D00C1C9F0 /* IOSurface.framework */; };
@@ -147,7 +146,6 @@
 		8C5FA96E2BDD7898008C246F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C5FA93F2BDD5039008C246F /* IOKit.framework */; };
 		8C5FA96F2BDD789C008C246F /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C5FA9412BDD503D008C246F /* IOSurface.framework */; };
 														8C71981A2ABF0E82003C6658 /* DOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C7198192ABF0E82003C6658 /* DOAppDelegate.m */; };
-		8C71981D2ABF0E82003C6658 /* DOSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C71981C2ABF0E82003C6658 /* DOSceneDelegate.m */; };
 		8C7198282ABF0E84003C6658 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C7198262ABF0E84003C6658 /* LaunchScreen.storyboard */; };
 		8C71982B2ABF0E84003C6658 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C71982A2ABF0E84003C6658 /* main.m */; };
 				8CB4087D301FFB130097E18B /* clock_alarm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB4087C301FFB050097E18B /* clock_alarm.c */; };
@@ -264,12 +262,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-																																														042479802B66916B0082581B /* DONavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DONavigationController.h; sourceTree = "<group>"; };
 		042479812B66916B0082581B /* DOUIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOUIManager.h; sourceTree = "<group>"; };
 						042479842B66916B0082581B /* DOMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMainViewController.h; sourceTree = "<group>"; };
 						042479882B66916B0082581B /* DOUIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DOUIManager.m; sourceTree = "<group>"; };
-		042479892B66916B0082581B /* DONavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DONavigationController.m; sourceTree = "<group>"; };
-																042479932B66916B0082581B /* DOLogViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOLogViewProtocol.h; sourceTree = "<group>"; };
 																						0424799F2B66916B0082581B /* DOMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DOMainViewController.m; sourceTree = "<group>"; };
 										049D52042B7E7C1D00389436 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		049D52052B7E7C2500389436 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -435,8 +430,6 @@
 																8C7198152ABF0E82003C6658 /* Dopamine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dopamine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C7198182ABF0E82003C6658 /* DOAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOAppDelegate.h; sourceTree = "<group>"; };
 		8C7198192ABF0E82003C6658 /* DOAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DOAppDelegate.m; sourceTree = "<group>"; };
-		8C71981B2ABF0E82003C6658 /* DOSceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOSceneDelegate.h; sourceTree = "<group>"; };
-		8C71981C2ABF0E82003C6658 /* DOSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DOSceneDelegate.m; sourceTree = "<group>"; };
 		8C7198272ABF0E84003C6658 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C7198292ABF0E84003C6658 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8C71982A2ABF0E84003C6658 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -580,11 +573,8 @@
 		042479672B66916B0082581B /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				042479932B66916B0082581B /* DOLogViewProtocol.h */,
 				042479812B66916B0082581B /* DOUIManager.h */,
 				042479882B66916B0082581B /* DOUIManager.m */,
-				042479802B66916B0082581B /* DONavigationController.h */,
-				042479892B66916B0082581B /* DONavigationController.m */,
 				042479842B66916B0082581B /* DOMainViewController.h */,
 				0424799F2B66916B0082581B /* DOMainViewController.m */,
 			);
@@ -604,7 +594,6 @@
 			isa = PBXGroup;
 			children = (
 				0424798C2B66916B0082581B /* Indicator */,
-				042479932B66916B0082581B /* DOLogViewProtocol.h */,
 			);
 			path = Log;
 			sourceTree = "<group>";
@@ -959,8 +948,6 @@
 			children = (
 				8C7198182ABF0E82003C6658 /* DOAppDelegate.h */,
 				8C7198192ABF0E82003C6658 /* DOAppDelegate.m */,
-				8C71981B2ABF0E82003C6658 /* DOSceneDelegate.h */,
-				8C71981C2ABF0E82003C6658 /* DOSceneDelegate.m */,
 			);
 			path = "App Delegates";
 			sourceTree = "<group>";
@@ -1630,7 +1617,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				042479AF2B66916B0082581B /* DONavigationController.m in Sources */,
 				042479B82B66916B0082581B /* DOMainViewController.m in Sources */,
 				8C029F432B4DFD5D0071DE58 /* DOExploitManager.m in Sources */,
 				042479AE2B66916B0082581B /* DOUIManager.m in Sources */,
@@ -1640,7 +1626,6 @@
 				8C71982B2ABF0E84003C6658 /* main.m in Sources */,
 				8C029F602B4E25350071DE58 /* DOEnvironmentManager.m in Sources */,
 				8C029F4E2B4E1FF30071DE58 /* DOExploit.m in Sources */,
-				8C71981D2ABF0E82003C6658 /* DOSceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,29 +18,10 @@
     return sharedInstance;
 }
 
-- (id)init
+- (void)sendLog:(NSString *)log
 {
-    if (self = [super init]) {
-        _logRecord = [NSMutableArray new];
-        _logLock = [NSLock new];
-    }
-    return self;
-}
-
-- (void)sendLog:(NSString *)log debug:(BOOL)debug
-{
-    (void)debug;
-    if (!self.logView || !log) return;
-
-    [_logLock lock];
-    [self.logRecord addObject:log];
-    [self.logView showLog:log];
-    [_logLock unlock];
-}
-
-- (void)completeJailbreak
-{
-    [self.logView didComplete];
+    if (!log || !self.logHandler) return;
+    self.logHandler(log);
 }
 
 - (void)observeFileDescriptor:(int)fd withCallback:(void (^)(char *line))callbackBlock
@@ -83,10 +64,10 @@
 - (void)startLogCapture
 {
     [self observeFileDescriptor:STDOUT_FILENO withCallback:^(char *line) {
-        [self sendLog:[NSString stringWithUTF8String:line] debug:YES];
+        [self sendLog:[NSString stringWithUTF8String:line]];
     }];
     [self observeFileDescriptor:STDERR_FILENO withCallback:^(char *line) {
-        [self sendLog:[NSString stringWithUTF8String:line] debug:YES];
+        [self sendLog:[NSString stringWithUTF8String:line]];
     }];
 }
 
