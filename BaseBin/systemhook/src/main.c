@@ -4,6 +4,8 @@
 #include <mach-o/dyld_images.h>
 #include <mach-o/getsect.h>
 #include <dlfcn.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <paths.h>
 #include <util.h>
@@ -193,6 +195,127 @@ int csops_audittoken_hook(pid_t pid, unsigned int ops, void *useraddr, size_t us
 }
 
 #endif
+
+bool should_enable_tweaks(void)
+{
+	if (access(JBROOT_PATH("/basebin/.safe_mode"), F_OK) == 0) {
+		return false;
+	}
+
+	char *tweaksDisabledEnv = getenv("DISABLE_TWEAKS");
+	if (tweaksDisabledEnv) {
+		if (!strcmp(tweaksDisabledEnv, "1")) {
+			return false;
+		}
+	}
+
+	if (jbclient_dopamine_is_jailbroken(NULL)) {
+		// Probe whether we are the Dopamine app
+		// Only the Dopamine app is allowed to contact this domain
+		// In this case we want to disable tweak injection to prevent jailbreak detections etc messing with the app functionality
+		return false;
+	}
+
+	const char *tweaksDisabledPathSuffixes[] = {
+		"/usr/libexec/xpcproxy",
+	};
+	for (size_t i = 0; i < sizeof(tweaksDisabledPathSuffixes) / sizeof(const char*); i++) {
+		if (string_has_suffix(gExecutablePath, tweaksDisabledPathSuffixes[i])) return false;
+	}
+
+	if (__builtin_available(iOS 16.0, *)) {
+		const char *iOS16TweaksDisabledPaths[] = {
+			"/usr/libexec/logd",
+			"/usr/sbin/notifyd",
+			"/usr/libexec/usermanagerd",
+		};
+		for (size_t i = 0; i < sizeof(iOS16TweaksDisabledPaths) / sizeof(const char*); i++) {
+			if (!strcmp(gExecutablePath, iOS16TweaksDisabledPaths[i])) return false;
+		}
+	}
+
+	return true;
+}
+
+static char *copy_main_bundle_identifier(void)
+{
+	const char *slash = strrchr(gExecutablePath, '/');
+	if (!slash) return NULL;
+
+	char infoPath[PATH_MAX];
+	size_t dirLen = (size_t)(slash - gExecutablePath);
+	if (dirLen + sizeof("/Info.plist") > sizeof(infoPath)) return NULL;
+	memcpy(infoPath, gExecutablePath, dirLen);
+	memcpy(infoPath + dirLen, "/Info.plist", sizeof("/Info.plist"));
+
+	xpc_object_t info = xpc_object_from_plist(infoPath);
+	if (!info) return NULL;
+
+	char *out = NULL;
+	if (xpc_get_type(info) == XPC_TYPE_DICTIONARY) {
+		const char *bundleId = xpc_dictionary_get_string(info, "CFBundleIdentifier");
+		if (bundleId) out = strdup(bundleId);
+	}
+	xpc_release(info);
+	return out;
+}
+
+static void dlopen_hook_entry(const char *entry)
+{
+	if (!entry || !entry[0]) return;
+
+	const char *path = NULL;
+	if (entry[0] == '/' && access(entry, F_OK) == 0) {
+		path = entry;
+	} else if (entry[0] == '/') {
+		path = JBROOT_PATH(entry);
+	} else {
+		char rel[PATH_MAX];
+		rel[0] = '/';
+		strlcpy(rel + 1, entry, sizeof(rel) - 1);
+		path = JBROOT_PATH(rel);
+	}
+	if (path) dlopen(path, RTLD_NOW);
+}
+
+static void load_hooks_from_plist(const char *plistPath, const char *bundleId)
+{
+	if (!plistPath || !bundleId || access(plistPath, R_OK) != 0) return;
+
+	xpc_object_t hooks = xpc_object_from_plist(plistPath);
+	if (!hooks || xpc_get_type(hooks) != XPC_TYPE_DICTIONARY) {
+		if (hooks) xpc_release(hooks);
+		return;
+	}
+
+	xpc_object_t value = xpc_dictionary_get_value(hooks, bundleId);
+	if (!value) {
+		xpc_release(hooks);
+		return;
+	}
+
+	if (xpc_get_type(value) == XPC_TYPE_STRING) {
+		dlopen_hook_entry(xpc_string_get_string_ptr(value));
+	} else if (xpc_get_type(value) == XPC_TYPE_ARRAY) {
+		size_t count = xpc_array_get_count(value);
+		for (size_t i = 0; i < count; i++) {
+			const char *entry = xpc_array_get_string(value, i);
+			if (entry) dlopen_hook_entry(entry);
+		}
+	}
+
+	xpc_release(hooks);
+}
+
+static void load_plist_hooks(void)
+{
+	char *bundleId = copy_main_bundle_identifier();
+	if (!bundleId) return;
+
+	load_hooks_from_plist(JBROOT_PATH("/var/mobile/hooks.plist"), bundleId);
+	load_hooks_from_plist(JBROOT_PATH("/basebin/hooks.plist"), bundleId);
+	free(bundleId);
+}
 
 int __posix_spawn_hook(pid_t *restrict pid, const char *restrict path, struct _posix_spawn_args_desc *desc, char *const argv[restrict], char * const envp[restrict])
 {
@@ -422,6 +545,12 @@ __attribute__((constructor)) static void initializer(void)
 			litehook_hook_function(necp_session_open, necp_session_open_hook);
 			litehook_hook_function(necp_session_action, necp_session_action_hook);
 		}
+#endif
+		if (should_enable_tweaks()) {
+			load_plist_hooks();
+		}
+
+#ifndef __arm64e__
 		// Feeable attempt at adding back CS_VALID
 		jbclient_cs_revalidate();
 #endif

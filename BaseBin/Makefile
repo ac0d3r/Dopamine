@@ -83,6 +83,7 @@ ifneq (,$(wildcard $(shell xcrun --sdk iphoneos --show-sdk-path)/usr/include/xpc
 endif
 
 basebin.tc: subprojects
+	@plutil -convert binary1 -o .build/hooks.plist systemhook/hooks.plist
 	trustcache create .build/basebin.tc .build
 	cp .build/basebin.tc basebin.tc
 

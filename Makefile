@@ -16,6 +16,7 @@ all:
 
 clean:
 	@$(MAKE) -C BaseBin clean
+	@$(MAKE) -C Demo clean
 	@$(MAKE) -C Application clean
 
 update: all

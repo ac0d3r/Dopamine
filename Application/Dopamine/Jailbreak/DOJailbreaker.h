@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)contiguousMappingWorkaroundNeeded;
 - (void)applyContiguousMappingWorkaround;
 
+- (BOOL)isFakeLibMounted;
+- (void)logMiniEnvironment;
+- (NSError *)clearMiniEnvironment;
+
 @end
 
 NS_ASSUME_NONNULL_END

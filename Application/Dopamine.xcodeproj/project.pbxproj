@@ -1223,6 +1223,7 @@
 				8C7198132ABF0E82003C6658 /* Resources */,
 				8C029F5C2B4E21F50071DE58 /* Embed Libraries */,
 				8CDD07AE2B4F619000A32B61 /* Embed Frameworks */,
+				8C8F1A012ABF0E82003C6658 /* Package Mini Payload */,
 			);
 			buildRules = (
 			);
@@ -1531,6 +1532,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "install_name_tool -change \"@loader_path/libjailbreak.dylib\" \"@executable_path/libjailbreak.dylib\" \"$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\"\n";
+		};
+		8C8F1A012ABF0E82003C6658 /* Package Mini Payload */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../BaseBin/basebin.tar",
+				"$(SRCROOT)/../BaseBin/basebin.tc",
+			);
+			name = "Package Mini Payload";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(CONTENTS_FOLDER_PATH)/basebin.tar",
+				"$(BUILT_PRODUCTS_DIR)/$(CONTENTS_FOLDER_PATH)/basebin.tc",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nAPP=\"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH\"\nif [ -f \"$SRCROOT/../BaseBin/basebin.tar\" ]; then cp \"$SRCROOT/../BaseBin/basebin.tar\" \"$APP/basebin.tar\"; else echo \"warning: BaseBin/basebin.tar missing — run make -C BaseBin\"; fi\nif [ -f \"$SRCROOT/../BaseBin/basebin.tc\" ]; then cp \"$SRCROOT/../BaseBin/basebin.tc\" \"$APP/basebin.tc\"; fi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

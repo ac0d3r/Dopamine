@@ -58,7 +58,18 @@ int dopamine_get_root(audit_token_t *processToken)
 {
 	pid_t pid = audit_token_to_pid(*processToken);
 	uint64_t proc = proc_find(pid);
+	if (!proc) return 1;
 	uint64_t ucred = proc_ucred(proc);
+	if (!ucred) return 1;
+
+	// Drop the sandbox so the Dopamine app can write jbroot (Add Hook, etc.).
+	// Check-in only issues a read-write extension for jbroot/var/mobile.
+	if (koffsetof(ucred, label)) {
+		uint64_t label = kread_ptr(ucred + koffsetof(ucred, label));
+		if (label) {
+			mac_label_set(label, 1, -1);
+		}
+	}
 
 	if (kread32(ucred + koffsetof(ucred, uid)) == 501) {
 		kwrite32(ucred + koffsetof(ucred, uid), 0);
@@ -73,11 +84,9 @@ int dopamine_get_root(audit_token_t *processToken)
 				kwrite32(auditToken + 8, 0); // gid
 			}
 		}
-
-		return 0;
 	}
 
-	return 1;
+	return 0;
 }
 
 int dopamine_drop_root(audit_token_t *processToken)

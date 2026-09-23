@@ -293,6 +293,22 @@ int systemwide_process_checkin(audit_token_t *processToken, char **rootPathOut, 
 	else if (is_dopamine_app(procPath)) {
 		// platformize
 		proc_csflags_set(proc, CS_PLATFORM_BINARY);
+
+		// Check-in only makes jbroot/var/mobile writable. The app also needs to
+		// install files under jbroot/basebin (hooks.plist / uploaded dylibs).
+		char *jbrootRW = sandbox_extension_issue_file_to_process("com.apple.app-sandbox.read-write", JBROOT_PATH(""), 0, *processToken);
+		if (jbrootRW) {
+			if (*sandboxExtensionsOut) {
+				char *parts[] = { *sandboxExtensionsOut, jbrootRW };
+				char *combined = combine_strings('|', parts, 2);
+				free(*sandboxExtensionsOut);
+				*sandboxExtensionsOut = combined;
+			} else {
+				*sandboxExtensionsOut = jbrootRW;
+				jbrootRW = NULL;
+			}
+			free(jbrootRW);
+		}
 	}
 
 	xpc_object_t customTrustObj = xpc_copy_entitlement_for_token("jb.pmap_cs.custom_trust", processToken);
