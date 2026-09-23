@@ -12,3 +12,7 @@ Application/Payload
 Tools/fastPathSign/.build_*
 Exploits/kfd/kfd.framework/kfd
 .sign
+Demo/SpringBoardAlert.dylib
+Demo/SpringBoardAlert.tc
+
+.vscode
